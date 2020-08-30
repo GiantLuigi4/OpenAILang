@@ -10,6 +10,12 @@ print(randVal)
 //print(len(getPixel)
 //print(len(getPixel[0])
 
+//use \ to escape a character from whatever it's supposed to do according to the compiler
+//\p\r\i\n\t\(\"\h\e\l\l\o\ \=\ \'\h\e\l\l\o\'\"\)
+//I know this example looks ugly, but it's not required to be like that
+//with the current version, you can just do:
+//print("hello \= 'hello'")
+
 if:getPixel:0,0=color
     keyPress:w
 else:

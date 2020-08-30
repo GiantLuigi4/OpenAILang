@@ -79,99 +79,113 @@ class AIInterpreter {
             boolean isStore = false
             boolean isRand = false
             String min = 0
+            boolean isEscaped = false
             for (char c : line.toCharArray()) {
-                if (c.isLetter()) {
+                if (isEscaped) {
                     word.append(c)
-                } else if (c == (char) ':') {
-                    if (word.toString() == "getPixel") {
-                        lineBuilder.append(word.append("[").toString())
-                        word = new StringBuilder()
-                        isArray = true
-                    } else if (word.toString() == "rand") {
-                        lineBuilder.append(word.append(".nextInt(").toString())
-                        word = new StringBuilder()
-                        isRand = true
-                    } else if (word.toString() == "rgb") {
-                        word = new StringBuilder()
-                        isColor = true
-                    } else if (word.toString() == 'else') {
-                        word.append(c)
-                    } else if (word.toString() == "store") {
-                        word = new StringBuilder()
-                        isStore = true
-                    } else {
-                        word.append("('")
-                        isArgs = true
-                    }
-                } else if ((c.isDigit() && c.toString() != '=') || c.toString() == ',') {
-                    if (isArray && c.toString() == ',') {
-                        word.append('][')
-                    } else if (isStore && c.toString() == ',') {
-                        lineBuilder.append(word.append(' = ').toString())
-                        word = new StringBuilder()
-                        isStore = false
-                    } else if (isRand && c.toString() == ',') {
-                        min = word.toString()
-                        word = new StringBuilder()
-                    } else if (isColor && c.toString() == ',') {
-                        if (r == -1) r = Integer.parseInt(word.toString())
-                        else if (g == -1) g = Integer.parseInt(word.toString())
-                        else if (b == -1) b = Integer.parseInt(word.toString())
-                        word = new StringBuilder()
-                    } else {
-                        if (c.toString() == '=') {
-                            word.append(' ')
-                            word.append(c)
-                            word.append(c)
-                            word.append(' ')
-                        } else {
-                            word.append(c)
-                        }
-                    }
+                    isEscaped = false
                 } else {
-                    if (isArray) {
-                        word.append("]")
-                        isArray = false
-                        if (c.toString() == '=') {
-                            word.append(' ')
-                            word.append(c)
-                            word.append(c)
-                            word.append(' ')
-                        }
-                    } else if (isColor) {
-                        if (r == -1) r = Integer.parseInt(word.toString())
-                        else if (g == -1) g = Integer.parseInt(word.toString())
-                        else if (b == -1) b = Integer.parseInt(word.toString())
-                        word = new StringBuilder()
-                        word.append(Color.toInt(r, g, b, 0))
-                        r = -1
-                        g = -1
-                        b = -1
-                    } else if (isArgs) {
-                        word.append("')")
-                        isArgs = false
-                    } else if (c.toString() == '=') {
-                        word.append(' ')
+                    if (c.isLetter()) {
                         word.append(c)
-                        word.append(c)
-                        word.append(' ')
-                    } else {
-                        if (c.toString() == '|') {
-                            if (isArray || isArgs || isColor || isStore || isRand) {
-                                isArray = false
-                                isArgs = false
-                                isColor = false
-                                if (isRand) {
-                                    word.append(") + ").append(min)
-                                }
-                                isRand = false
-                            }
+                    } else if (c == (char) ':') {
+                        if (word.toString() == "getPixel") {
+                            lineBuilder.append(word.append("[").toString())
+                            word = new StringBuilder()
+                            isArray = true
+                        } else if (word.toString() == "rand") {
+                            lineBuilder.append(word.append(".nextInt(").toString())
+                            word = new StringBuilder()
+                            isRand = true
+                        } else if (word.toString() == "rgb") {
+                            word = new StringBuilder()
+                            isColor = true
+                        } else if (word.toString() == 'else') {
+                            word.append(c)
+                        } else if (word.toString() == "store") {
+                            word = new StringBuilder()
+                            isStore = true
                         } else {
-                            word.append(c)
+                            word.append("('")
+                            isArgs = true
                         }
+                    } else if ((c.isDigit() && c.toString() != '=') || c.toString() == ',') {
+                        if (isArray && c.toString() == ',') {
+                            word.append('][')
+                        } else if (isStore && c.toString() == ',') {
+                            lineBuilder.append(word.append(' = ').toString())
+                            word = new StringBuilder()
+                            isStore = false
+                        } else if (isRand && c.toString() == ',') {
+                            min = word.toString()
+                            word = new StringBuilder()
+                        } else if (isColor && c.toString() == ',') {
+                            if (r == -1) r = Integer.parseInt(word.toString())
+                            else if (g == -1) g = Integer.parseInt(word.toString())
+                            else if (b == -1) b = Integer.parseInt(word.toString())
+                            word = new StringBuilder()
+                        } else {
+                            if (c.toString() == '=') {
+                                word.append(' ')
+                                word.append(c)
+                                word.append(c)
+                                word.append(' ')
+                            } else {
+                                if (c.toString() != '\\') {
+                                    word.append(c)
+                                } else {
+                                    isEscaped = true
+                                }
+                            }
+                        }
+                    } else {
+                        if (isArray) {
+                            word.append("]")
+                            isArray = false
+                            if (c.toString() == '=') {
+                                word.append(' ')
+                                word.append(c)
+                                word.append(c)
+                                word.append(' ')
+                            }
+                        } else if (isColor) {
+                            if (r == -1) r = Integer.parseInt(word.toString())
+                            else if (g == -1) g = Integer.parseInt(word.toString())
+                            else if (b == -1) b = Integer.parseInt(word.toString())
+                            word = new StringBuilder()
+                            word.append(Color.toInt(r, g, b, 0))
+                            r = -1
+                            g = -1
+                            b = -1
+                        } else if (isArgs) {
+                            word.append("')")
+                            isArgs = false
+                        } else if (c.toString() == '=') {
+                            word.append(' ')
+                            word.append(c)
+                            word.append(c)
+                            word.append(' ')
+                        } else if (!isEscaped) {
+                            if (c.toString() == '|') {
+                                if (isArray || isArgs || isColor || isStore || isRand) {
+                                    isArray = false
+                                    isArgs = false
+                                    isColor = false
+                                    if (isRand) {
+                                        word.append(") + ").append(min)
+                                    }
+                                    isRand = false
+                                }
+                            } else {
+                                if (c.toString() != '\\') {
+                                    word.append(c)
+                                } else {
+                                    isEscaped = true
+                                }
+                            }
+                        }
+                        lineBuilder.append(word.toString())
+                        word = new StringBuilder()
                     }
-                    lineBuilder.append(word.toString())
-                    word = new StringBuilder()
                 }
             }
             if (isArgs) {
