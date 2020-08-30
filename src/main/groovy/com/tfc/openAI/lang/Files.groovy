@@ -9,7 +9,7 @@ class Files {
         Scanner sc = new Scanner(file)
         StringBuilder builder = new StringBuilder()
         while (sc.hasNextLine())
-            builder.append(sc.nextLine()+"\n")
+            builder.append(sc.nextLine() + "\n")
         sc.close()
         return builder.toString()
     }
@@ -19,8 +19,8 @@ class Files {
         byte[] bytes = new byte[inputStream.available()]
         inputStream.read(bytes)
         StringBuilder builder = new StringBuilder()
-        for (byte b:bytes) {
-            builder.append((char)b)
+        for (byte b : bytes) {
+            builder.append((char) b)
         }
         return builder.toString()
     }

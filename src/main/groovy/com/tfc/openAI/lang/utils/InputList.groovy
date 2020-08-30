@@ -3,7 +3,7 @@ package com.tfc.openAI.lang.utils
 import java.util.function.Consumer
 
 class InputList {
-    private static final HashMap<Integer,ArrayList<String>> inputs = new HashMap<>()
+    private static final HashMap<Integer, ArrayList<String>> inputs = new HashMap<>()
 
     static void add(int id, String name) {
         if (!inputs.containsKey(id)) inputs.put(id, new ArrayList<String>())
