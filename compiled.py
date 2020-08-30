@@ -1,7 +1,7 @@
 from com.tfc.openAI.lang.utils import InputList
 
-getPixel = % display %
-aiInstance = % id %
+getPixel = %display%
+aiInstance = %id%
 
 
 def keyPress(key):
