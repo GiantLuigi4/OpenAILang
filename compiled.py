@@ -1,7 +1,9 @@
 from com.tfc.openAI.lang.utils import InputList
+from java.util import Random
 
-getPixel = %display%
-aiInstance = %id%
+rand = Random()
+getPixel = % display %
+aiInstance = % id %
 
 
 def keyPress(key):
@@ -17,13 +19,13 @@ def mouseMove(key):
 
 
 def AI():
-    if getPixel[0][0] == 16777215:
+    color = 16777215
+    randVal = rand.nextInt(10) + 0
+    print(randVal)
+    if getPixel[0][0] == color:
         keyPress('w')
     else:
         keyPress('s')
-
     click('left')
     mouseMove('0,0')
-
-
 AI()

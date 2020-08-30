@@ -19,7 +19,10 @@ class AIInterpreter {
     String interpret(String code) {
         StringBuilder builder = new StringBuilder()
         builder.append("from com.tfc.openAI.lang.utils import InputList\n" +
+                "from java.util import Random\n" +
                 "\n" +
+                "\n" +
+                "rand = Random()\n" +
                 "\n" +
                 "getPixel = %display%\n" +
                 "aiInstance = %id%\n" +
@@ -63,7 +66,7 @@ class AIInterpreter {
             indents += 1
             if (line.startsWith("if:")) {
                 line = line.replace("if:", "if ")
-            } else if (line.startsWith("//")) {
+            } else if (line.startsWith("//") || line == "") {
                 continue
             }
             StringBuilder lineBuilder = new StringBuilder()
@@ -73,6 +76,9 @@ class AIInterpreter {
             boolean isIf = line.startsWith('if')
             int r = -1, g = -1, b = -1
             boolean isArgs = false
+            boolean isStore = false
+            boolean isRand = false
+            String min = 0
             for (char c : line.toCharArray()) {
                 if (c.isLetter()) {
                     word.append(c)
@@ -81,11 +87,18 @@ class AIInterpreter {
                         lineBuilder.append(word.append("[").toString())
                         word = new StringBuilder()
                         isArray = true
+                    } else if (word.toString() == "rand") {
+                        lineBuilder.append(word.append(".nextInt(").toString())
+                        word = new StringBuilder()
+                        isRand = true
                     } else if (word.toString() == "rgb") {
                         word = new StringBuilder()
                         isColor = true
                     } else if (word.toString() == 'else') {
                         word.append(c)
+                    } else if (word.toString() == "store") {
+                        word = new StringBuilder()
+                        isStore = true
                     } else {
                         word.append("('")
                         isArgs = true
@@ -93,6 +106,13 @@ class AIInterpreter {
                 } else if ((c.isDigit() && c.toString() != '=') || c.toString() == ',') {
                     if (isArray && c.toString() == ',') {
                         word.append('][')
+                    } else if (isStore && c.toString() == ',') {
+                        lineBuilder.append(word.append(' = ').toString())
+                        word = new StringBuilder()
+                        isStore = false
+                    } else if (isRand && c.toString() == ',') {
+                        min = word.toString()
+                        word = new StringBuilder()
                     } else if (isColor && c.toString() == ',') {
                         if (r == -1) r = Integer.parseInt(word.toString())
                         else if (g == -1) g = Integer.parseInt(word.toString())
@@ -117,8 +137,6 @@ class AIInterpreter {
                             word.append(c)
                             word.append(c)
                             word.append(' ')
-                        } else {
-                            word.append(c)
                         }
                     } else if (isColor) {
                         if (r == -1) r = Integer.parseInt(word.toString())
@@ -138,7 +156,19 @@ class AIInterpreter {
                         word.append(c)
                         word.append(' ')
                     } else {
-                        word.append(c)
+                        if (c.toString() == '|') {
+                            if (isArray || isArgs || isColor || isStore || isRand) {
+                                isArray = false
+                                isArgs = false
+                                isColor = false
+                                if (isRand) {
+                                    word.append(") + ").append(min)
+                                }
+                                isRand = false
+                            }
+                        } else {
+                            word.append(c)
+                        }
                     }
                     lineBuilder.append(word.toString())
                     word = new StringBuilder()
@@ -158,7 +188,7 @@ class AIInterpreter {
                 "\n" +
                 "\n" +
                 "AI()\n")
-        return builder.toString()
+        return builder.toString().replace("\n\n", "\n").replace("\n\n", "\n")
     }
 
     String interpretFromCL(String name) {

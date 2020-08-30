@@ -1,7 +1,16 @@
 //This shows all current functions in the language
 //Syntax is strict for functions (such as if statements and whatnot), but it's a lot easier than making a parser for an machine learning AI
 //Could also be used in a normal game for sake of simplifying basic AIs
-if:getPixel:0,0=rgb:255,255,255|
+store:color,rgb:255,255,255|
+
+store:randVal,rand:0,10|
+//You can also directly use python, but the compiler might not understand it and compile to python it wrong
+//print won't break too much when compiling
+print(randVal)
+//print(len(getPixel)
+//print(len(getPixel[0])
+
+if:getPixel:0,0=color
     keyPress:w
 else:
     keyPress:s
