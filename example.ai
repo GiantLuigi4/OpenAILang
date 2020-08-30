@@ -1,0 +1,7 @@
+if:getPixel:0,0=rgb:255,255,255|
+    keyPress:w
+else:
+    keyPress:s
+
+click:left
+mouseMove:0,0
