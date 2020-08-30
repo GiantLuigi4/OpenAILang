@@ -3,6 +3,7 @@ package com.tfc.openAI.lang
 
 import com.tfc.openAI.lang.utils.Color
 import com.tfc.openAI.lang.utils.InputList
+import com.tfc.openAI.lang.utils.StringDuplicator
 import org.python.util.PythonInterpreter
 
 import java.util.function.Consumer
@@ -41,7 +42,7 @@ class AIInterpreter {
         for (String s : code.split("\n")) {
             String indentedLine = s
             if (indentedLine.startsWith("//")) {
-                break
+                continue
             }
             int indents = 0
             String line = ""
@@ -63,7 +64,7 @@ class AIInterpreter {
             if (line.startsWith("if:")) {
                 line = line.replace("if:", "if ")
             } else if (line.startsWith("//")) {
-                break
+                continue
             }
             StringBuilder lineBuilder = new StringBuilder()
             StringBuilder word = new StringBuilder()
@@ -148,9 +149,9 @@ class AIInterpreter {
             }
             lineBuilder.append(word.toString())
             if (isIf) {
-                builder.append(com.tfc.openAI.lang.utils.StringDuplicator.dupe(' ', indents) + (lineBuilder.append(":\n").toString()))
+                builder.append(StringDuplicator.dupe(' ', indents) + (lineBuilder.append(":\n").toString()))
             } else {
-                builder.append(com.tfc.openAI.lang.utils.StringDuplicator.dupe(' ', indents) + (lineBuilder.append("\n").toString()))
+                builder.append(StringDuplicator.dupe(' ', indents) + (lineBuilder.append("\n").toString()))
             }
         }
         builder.append("" +
@@ -171,7 +172,7 @@ class AIInterpreter {
     }
 
     void exec(String compiled, Consumer<String> outputConsumer, int aiInstance, int[][] display) {
-        interpreter.eval(compiled.replace("%display%", Arrays.deepToString(display)).replace("%id%", "" + aiInstance))
+        interpreter.exec(compiled.replace("%display%", Arrays.deepToString(display)).replace("%id%", "" + aiInstance))
         InputList.forEach(aiInstance, outputConsumer)
         interpreter.cleanup()
     }
@@ -179,5 +180,14 @@ class AIInterpreter {
     void close() {
         interpreter.close()
         interpreter.finalize()
+    }
+
+    static void main(String[] args) {
+        AIInterpreter interpreter = new AIInterpreter()
+        String code = interpreter.interpretFromFile("example.ai")
+        System.out.println(code)
+        int[][] array = new int[1][1]
+        array[0] = Color.toInt(255, 255, new Random().nextInt(1) + 254, 0)
+        interpreter.exec(code, { instruction -> System.out.println(instruction) }, 0, array)
     }
 }

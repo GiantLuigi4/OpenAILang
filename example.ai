@@ -1,3 +1,6 @@
+//This shows all current functions in the language
+//Syntax is strict for functions (such as if statements and whatnot), but it's a lot easier than making a parser for an machine learning AI
+//Could also be used in a normal game for sake of simplifying basic AIs
 if:getPixel:0,0=rgb:255,255,255|
     keyPress:w
 else:
