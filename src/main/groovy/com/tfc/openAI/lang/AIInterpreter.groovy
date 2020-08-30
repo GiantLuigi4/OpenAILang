@@ -40,6 +40,9 @@ class AIInterpreter {
         )
         for (String s : code.split("\n")) {
             String indentedLine = s
+            if (indentedLine.startsWith("//")) {
+                break
+            }
             int indents = 0
             String line = ""
             boolean hitLetter = false
@@ -57,7 +60,11 @@ class AIInterpreter {
             }
             indents /= '    '.length()
             indents += 1
-            line = line.replace("if:", "if ")
+            if (line.startsWith("if:")) {
+                line = line.replace("if:", "if ")
+            } else if (line.startsWith("//")) {
+                break
+            }
             StringBuilder lineBuilder = new StringBuilder()
             StringBuilder word = new StringBuilder()
             boolean isArray = false
