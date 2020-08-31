@@ -26,6 +26,10 @@ def AI():
         keyPress('w')
     else:
         keyPress('s')
+    if rand.nextInt(20) + 0 == rand.nextInt(25) + 0:
+        keyPress('d')
+    elif rand.nextInt(20) + 0 == rand.nextInt(25) + 0:
+        keyPress('b')
     click('left')
     mouseMove('0,0')
 AI()

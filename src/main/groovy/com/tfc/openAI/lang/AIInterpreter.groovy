@@ -16,7 +16,13 @@ class AIInterpreter {
         return new PythonInterpreter()
     }
 
-    String interpret(String code) {
+    String interpret(String code1) {
+        String code = code1
+        String lastLineIndents = '§'
+        code = code
+                .replace("else:if:", "elif ")
+                .replace("else if:", "elif ")
+                .replace("elif:", "elif ")
         StringBuilder builder = new StringBuilder()
         builder.append("from com.tfc.openAI.lang.utils import InputList\n" +
                 "from java.util import Random\n" +
@@ -42,6 +48,7 @@ class AIInterpreter {
                 "\n" +
                 "def AI():\n"
         )
+        int lastIndents = 0
         for (String s : code.split("\n")) {
             String indentedLine = s
             if (indentedLine.startsWith("//")) {
@@ -64,6 +71,11 @@ class AIInterpreter {
             }
             indents /= '    '.length()
             indents += 1
+            if (line.startsWith(lastLineIndents)) {
+                indents = lastIndents + 1
+                line = line.substring(1)
+            }
+            lastIndents = indents
             if (line.startsWith("if:")) {
                 line = line.replace("if:", "if ")
             } else if (line.startsWith("//") || line == "") {
@@ -73,7 +85,7 @@ class AIInterpreter {
             StringBuilder word = new StringBuilder()
             boolean isArray = false
             boolean isColor = false
-            boolean isIf = line.startsWith('if')
+            boolean isIf = line.startsWith('if') || line.startsWith("elif ")
             int r = -1, g = -1, b = -1
             boolean isArgs = false
             boolean isStore = false

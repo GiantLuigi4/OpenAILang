@@ -21,5 +21,11 @@ if:getPixel:0,0=color
 else:
     keyPress:s
 
+if:rand:0,20|=rand:0,25|
+    keyPress:d
+//you can use "else if:", "elif:", or "else:if:"
+else:if:rand:0,20|=rand:0,25|
+    keyPress:b
+
 click:left
 mouseMove:0,0
